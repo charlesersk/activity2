@@ -394,6 +394,14 @@ public final class RequestProtos {
        * <code>QUIT = 4;</code>
        */
       QUIT(4),
+      /**
+       * <pre>
+       * when the user wants to leave the game -- has no further data
+       * </pre>
+       *
+       * <code>BYE = 5;</code>
+       */
+      BYE(5),
       ;
 
       /**
@@ -436,6 +444,14 @@ public final class RequestProtos {
        * <code>QUIT = 4;</code>
        */
       public static final int QUIT_VALUE = 4;
+      /**
+       * <pre>
+       * when the user wants to leave the game -- has no further data
+       * </pre>
+       *
+       * <code>BYE = 5;</code>
+       */
+      public static final int BYE_VALUE = 5;
 
 
       public final int getNumber() {
@@ -463,6 +479,7 @@ public final class RequestProtos {
           case 2: return NEW;
           case 3: return ROWCOL;
           case 4: return QUIT;
+          case 5: return BYE;
           default: return null;
         }
       }
@@ -2100,14 +2117,14 @@ public final class RequestProtos {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\rrequest.proto\022\toperation\"\271\001\n\007Request\022=" +
+      "\n\rrequest.proto\022\toperation\"\302\001\n\007Request\022=" +
       "\n\roperationType\030\001 \001(\0162 .operation.Reques" +
       "t.OperationType:\004NAME\022\014\n\004name\030\002 \001(\t\022\013\n\003r" +
-      "ow\030\003 \001(\005\022\016\n\006column\030\004 \001(\005\"D\n\rOperationTyp" +
+      "ow\030\003 \001(\005\022\016\n\006column\030\004 \001(\005\"M\n\rOperationTyp" +
       "e\022\010\n\004NAME\020\000\022\n\n\006LEADER\020\001\022\007\n\003NEW\020\002\022\n\n\006ROWC" +
-      "OL\020\003\022\010\n\004QUIT\020\004\"\023\n\004Logs\022\013\n\003log\030\001 \003(\t**\n\007M" +
-      "essage\022\013\n\007CONNECT\020\000\022\t\n\005START\020\001\022\007\n\003WIN\020\002B" +
-      "\030\n\007buffersB\rRequestProtos"
+      "OL\020\003\022\010\n\004QUIT\020\004\022\007\n\003BYE\020\005\"\023\n\004Logs\022\013\n\003log\030\001" +
+      " \003(\t**\n\007Message\022\013\n\007CONNECT\020\000\022\t\n\005START\020\001\022" +
+      "\007\n\003WIN\020\002B\030\n\007buffersB\rRequestProtos"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

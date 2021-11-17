@@ -42,6 +42,10 @@ public class Game {
         won = true;
     }
 
+    public boolean getWon() {
+        return won;
+    }
+
     /**
      * Method loads in a new image from the specified files and creates the hidden image for it. 
      * @return Nothing.

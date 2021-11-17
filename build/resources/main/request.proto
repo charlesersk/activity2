@@ -14,6 +14,7 @@ message Request {
     NEW = 2;              // when the user wants to enter a game -- no further data
     ROWCOL = 3;           // when the user sends a row and column to the server  -- has the row and column as data
     QUIT = 4;             // when the user wants to quit the game -- has no further data
+    BYE = 5;             // when the user wants to leave the game -- has no further data
   }
 
   optional OperationType operationType = 1 [default = NAME]; // has the operation type

@@ -87,7 +87,7 @@ class SockBaseClient {
 
                         if (col.equalsIgnoreCase("BYE")) {
                             Request quit = Request.newBuilder()
-                                    .setOperationType(Request.OperationType.QUIT)
+                                    .setOperationType(Request.OperationType.BYE)
                                     .build();
                             quit.writeDelimitedTo(out);
                             response = Response.parseDelimitedFrom(in);
@@ -121,13 +121,22 @@ class SockBaseClient {
                                 .build();
                         answer.writeDelimitedTo(out);
                         response = Response.parseDelimitedFrom(in);
-                        System.out.println("Task: " + response.getResponseType());
+                        System.out.println("\nTask Type: " + response.getResponseType());
                         System.out.println("Image: \n" + response.getImage());
                         System.out.println("Task: \n" + response.getTask());
-                        System.out.println(response.getMessage());
+                        if (response.getHit()) {
+                            System.out.println("Yay! A battleship found : " + response.getMessage() + " to go...");
+                        } else {
+                            System.out.println("You missed!");
+                        }
                     }
 
                 } else if ("3".equalsIgnoreCase(option)) {
+                    Request request = Request.newBuilder()
+                            .setOperationType(Request.OperationType.QUIT).build();
+                    request.writeDelimitedTo(out);
+                    response = Response.parseDelimitedFrom(in);
+                    System.out.println(response.getMessage());
                     nonStop = false;
                 }
             }

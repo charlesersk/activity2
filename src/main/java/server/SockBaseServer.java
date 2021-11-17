@@ -1,18 +1,16 @@
 package server;
 
-import java.net.*;
-import java.io.*;
-import java.util.*;
-
-import buffers.ResponseProtos;
-import org.json.*;
-import java.lang.*;
-
-import buffers.RequestProtos.Request;
 import buffers.RequestProtos.Logs;
 import buffers.RequestProtos.Message;
-import buffers.ResponseProtos.Response;
+import buffers.RequestProtos.Request;
 import buffers.ResponseProtos.Entry;
+import buffers.ResponseProtos.Response;
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Date;
+import java.util.List;
 
 class SockBaseServer {
     static String logFilename = "logs.txt";
@@ -44,7 +42,8 @@ class SockBaseServer {
 
 
         System.out.println("Ready...");
-        while (true) {
+        boolean running = true;
+        while (running) {
             try {
                 // read the proto object and put into new objct
                 Request op = Request.parseDelimitedFrom(in);
@@ -111,16 +110,28 @@ class SockBaseServer {
                                 .setHit(hit)
                                 .setTask("Select a row and a column")
                                 .setImage(image)
+                                .setMessage(String.valueOf(game.getIdx()))
                                 .build();
                         response.writeDelimitedTo(out);
                     }
+                } else if (op.getOperationType() == Request.OperationType.BYE) {
+
+                    System.out.println(name + " left the game");
+                    final Response response = Response.newBuilder().setResponseType(Response.ResponseType.BYE).setMessage("You left the game").build();
+                    response.writeDelimitedTo(out);
+                } else if (op.getOperationType() == Request.OperationType.QUIT) {
+
+                    System.out.println("Game is quit by " + name);
+                    final Response response = Response.newBuilder().setResponseType(Response.ResponseType.BYE).setMessage("Game ended by " + name).build();
+                    game.setWon();
+                    response.writeDelimitedTo(out);
+                    if (out != null) out.close();
+                    if (in != null) in.close();
+                    if (clientSocket != null) clientSocket.close();
+                    running = false;
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
-            } finally {
-//            if (out != null)  out.close();
-//            if (in != null)   in.close();
-//            if (clientSocket != null) clientSocket.close();
             }
         }
     }
@@ -208,10 +219,24 @@ class SockBaseServer {
         }
 
         System.out.println("Server Started...");
-        clientSocket = serv.accept();
-        game.newGame();
-        SockBaseServer server = new SockBaseServer(clientSocket, game);
-        server.start();
+        while (true) {
+            clientSocket = serv.accept();
+
+            if (game.getWon()) {
+                game.newGame();
+            }
+
+
+            Socket finalClientSocket = clientSocket;
+            new Thread(() -> {
+                try {
+                    SockBaseServer server = new SockBaseServer(finalClientSocket, game);
+                    server.start();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+        }
 
     }
 }
