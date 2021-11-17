@@ -69,14 +69,64 @@ class SockBaseClient {
                 String option = optionReader.readLine();
 
                 if ("1".equalsIgnoreCase(option)) {
-
-                } else if ("2".equalsIgnoreCase(option)) {
                     Request request = Request.newBuilder()
-                            .setOperationType(Request.OperationType.NEW)
-                            .setName(option).build();
-                    request.writeTo(out);
+                            .setOperationType(Request.OperationType.LEADER).build();
+                    request.writeDelimitedTo(out);
                     response = Response.parseDelimitedFrom(in);
                     System.out.println(response.getMessage());
+                } else if ("2".equalsIgnoreCase(option)) {
+                    boolean play = true;
+                    Request request = Request.newBuilder()
+                            .setOperationType(Request.OperationType.NEW).build();
+                    request.writeDelimitedTo(out);
+                    response = Response.parseDelimitedFrom(in);
+                    System.out.println(response.getMessage());
+                    while (play) {
+                        System.out.print("Please enter col value: ");
+                        String col = optionReader.readLine();
+
+                        if (col.equalsIgnoreCase("BYE")) {
+                            Request quit = Request.newBuilder()
+                                    .setOperationType(Request.OperationType.QUIT)
+                                    .build();
+                            quit.writeDelimitedTo(out);
+                            response = Response.parseDelimitedFrom(in);
+                            System.out.println(response.getMessage());
+                            play = false;
+                            continue;
+                        }
+
+                        int colValue = -1;
+                        try {
+                            colValue = Integer.parseInt(col);
+                        } catch (Exception e) {
+                            System.out.println("Value must be int");
+                            continue;
+                        }
+
+                        System.out.print("Please enter row value: ");
+                        String row = optionReader.readLine();
+                        int rowValue = -1;
+                        try {
+                            rowValue = Integer.parseInt(row);
+                        } catch (Exception e) {
+                            System.out.println("Value must be int");
+                            continue;
+                        }
+
+                        Request answer = Request.newBuilder()
+                                .setOperationType(Request.OperationType.ROWCOL)
+                                .setColumn(colValue)
+                                .setRow(rowValue)
+                                .build();
+                        answer.writeDelimitedTo(out);
+                        response = Response.parseDelimitedFrom(in);
+                        System.out.println("Task: " + response.getResponseType());
+                        System.out.println("Image: \n" + response.getImage());
+                        System.out.println("Task: \n" + response.getTask());
+                        System.out.println(response.getMessage());
+                    }
+
                 } else if ("3".equalsIgnoreCase(option)) {
                     nonStop = false;
                 }
@@ -85,9 +135,7 @@ class SockBaseClient {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (in != null)   in.close();
-            if (out != null)  out.close();
-            if (serverSock != null) serverSock.close();
+
         }
     }
 }
