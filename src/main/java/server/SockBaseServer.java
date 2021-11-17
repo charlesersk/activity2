@@ -118,9 +118,9 @@ class SockBaseServer {
             } catch (Exception ex) {
                 ex.printStackTrace();
             } finally {
-            if (out != null)  out.close();
-            if (in != null)   in.close();
-            if (clientSocket != null) clientSocket.close();
+//            if (out != null)  out.close();
+//            if (in != null)   in.close();
+//            if (clientSocket != null) clientSocket.close();
             }
         }
     }
